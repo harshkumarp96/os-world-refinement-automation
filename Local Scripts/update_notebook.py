@@ -6,6 +6,7 @@ This script:
 2. Loads validated observations and thoughts from JSON
 3. Adds step images below step headers
 4. Replaces existing observations and thoughts with validated content
+5. Adds action cells with commands from pyautogui_actions text file
 """
 
 import json
@@ -31,6 +32,19 @@ def load_validated_data(json_path):
     """Load validated observation and thought data from JSON."""
     with open(json_path, 'r', encoding='utf-8') as f:
         return json.load(f)
+
+
+def load_actions(actions_path):
+    """Load action commands from pyautogui_actions text file."""
+    if not actions_path.exists():
+        return []
+    
+    with open(actions_path, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+    
+    # Remove empty lines and strip whitespace
+    actions = [line.strip() for line in lines if line.strip()]
+    return actions
 
 
 def get_step_number(cell_content):
@@ -64,7 +78,15 @@ def create_markdown_cell(content):
     }
 
 
-def update_notebook(notebook_path, validated_json_path, screenshots_dir):
+def clean_thought_content(thought_text):
+    """Remove any embedded ### Action section from thought text."""
+    # Split by ### Action and take only the part before it
+    if '### Action' in thought_text:
+        thought_text = thought_text.split('### Action')[0].strip()
+    return thought_text
+
+
+def update_notebook(notebook_path, validated_json_path, screenshots_dir, actions_path=None):
     """
     Update a task notebook with validated data and step images.
     
@@ -72,10 +94,16 @@ def update_notebook(notebook_path, validated_json_path, screenshots_dir):
         notebook_path: Path to the notebook file (.ipynb)
         validated_json_path: Path to the validated JSON file
         screenshots_dir: Path to the directory containing step screenshots
+        actions_path: Path to the pyautogui_actions text file (optional)
     """
     # Load data
     notebook = load_notebook(notebook_path)
     validated_data = load_validated_data(validated_json_path)
+    
+    # Load actions if provided
+    actions = []
+    if actions_path:
+        actions = load_actions(actions_path)
     
     # Get task name from paths for flexibility
     task_name = Path(notebook_path).stem
@@ -95,16 +123,29 @@ def update_notebook(notebook_path, validated_json_path, screenshots_dir):
             step_num = get_step_number(cell_content)
             
             if step_num is not None:
+                # Remove any embedded images from the step header cell
+                clean_header = re.sub(r'!\[.*?\]\(.*?\)', '', cell_content).strip()
+                cell['source'] = [clean_header]
+                
                 # Add the step header cell
                 new_cells.append(cell)
+                i += 1
                 
-                # Add image cell right after step header
+                # Check if next cell is already an image - if so, replace it
                 image_filename = f"{step_num}.png"
                 image_path = screenshots_folder / image_filename
+                relative_image_path = f"../Screenshots/{screenshots_folder.name}/{image_filename}"
                 
+                # Check if the next cell is an existing image cell
+                has_existing_image = False
+                if i < len(cells) and cells[i]['cell_type'] == 'markdown':
+                    next_content = ''.join(cells[i]['source']) if isinstance(cells[i]['source'], list) else cells[i]['source']
+                    if next_content.strip().startswith('![Step Image]'):
+                        has_existing_image = True
+                        i += 1  # Skip the old image cell
+                
+                # Add image cell (either new or replacement)
                 if image_path.exists():
-                    # Use relative path for the image
-                    relative_image_path = f"../Screenshots/{screenshots_folder.name}/{image_filename}"
                     new_cells.append(create_image_cell(relative_image_path))
                 
                 # Get validated data for this step
@@ -113,8 +154,10 @@ def update_notebook(notebook_path, validated_json_path, screenshots_dir):
                     observation = validated_data[step_key].get('observation', '')
                     thought = validated_data[step_key].get('thought', '')
                     
+                    # Clean thought content to remove any embedded action sections
+                    thought = clean_thought_content(thought)
+                    
                     # Skip all cells until we find the next step header
-                    i += 1
                     while i < len(cells):
                         next_cell = cells[i]
                         if next_cell['cell_type'] == 'markdown':
@@ -135,6 +178,12 @@ def update_notebook(notebook_path, validated_json_path, screenshots_dir):
                     if thought:
                         new_cells.append(create_markdown_cell("### Thought"))
                         new_cells.append(create_markdown_cell(thought))
+                    
+                    # Add action cell with command if available
+                    if actions and step_num <= len(actions):
+                        action_command = actions[step_num - 1]  # step_num is 1-indexed
+                        new_cells.append(create_markdown_cell("### Action"))
+                        new_cells.append(create_markdown_cell(action_command))
                     
                     continue
         
@@ -159,11 +208,12 @@ def main():
     
     task_num = sys.argv[1]
     
-    # Define paths based on project structure
-    base_dir = Path(__file__).parent
+    # Define paths based on project structure (script is in Local Scripts folder)
+    base_dir = Path(__file__).parent.parent  # Go up to project root
     notebook_path = base_dir / "Input Data" / "colab_notebook" / f"task_{task_num}.ipynb"
     validated_json_path = base_dir / "output" / f"task_{task_num}_validated.json"
     screenshots_dir = base_dir / "Input Data" / "Screenshots" / f"task_{task_num}"
+    actions_path = base_dir / "Input Data" / "pyautogui_actions" / f"task_{task_num}.txt"
     
     # Validate paths
     if not notebook_path.exists():
@@ -178,14 +228,21 @@ def main():
         print(f"✗ Warning: Screenshots directory not found at {screenshots_dir}")
         print("  Continuing without images...")
     
+    if not actions_path.exists():
+        print(f"✗ Warning: Actions file not found at {actions_path}")
+        print("  Continuing without action commands...")
+        actions_path = None
+    
     # Update the notebook
     print(f"Updating notebook for task {task_num}...")
     print(f"  Notebook: {notebook_path}")
     print(f"  Validated data: {validated_json_path}")
     print(f"  Screenshots: {screenshots_dir}")
+    if actions_path:
+        print(f"  Actions: {actions_path}")
     print()
     
-    update_notebook(notebook_path, validated_json_path, screenshots_dir)
+    update_notebook(notebook_path, validated_json_path, screenshots_dir, actions_path)
     print()
     print("✓ Update complete!")
 
