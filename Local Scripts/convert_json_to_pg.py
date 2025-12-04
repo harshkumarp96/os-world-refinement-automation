@@ -136,9 +136,10 @@ def main():
     # Write to output file
     try:
         with open(output_file, "w", encoding="utf-8") as f:
-            for cmd in commands:
+            for cmd in commands[:-1]:
                 f.write(cmd + "\n")
-            f.write("import sys; sys.exit(0)\n")
+            if commands:
+                f.write("import sys sys.exit(0)\n")
     except Exception as e:
         print(f"Error: Could not write output file: {e}")
         sys.exit(1)

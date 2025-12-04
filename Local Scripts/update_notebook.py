@@ -224,8 +224,7 @@ def update_notebook(notebook_path, validated_json_path, screenshots_dir, actions
                     # Add code cell with command if available
                     if actions and step_num <= len(actions):
                         action_command = actions[step_num - 1]  # step_num is 1-indexed
-                        new_cells.append(create_markdown_cell("### Code"))
-                        new_cells.append(create_markdown_cell(action_command))
+                        new_cells.append(create_markdown_cell(f"### Code\n\n{action_command}"))
                     
                     continue
         

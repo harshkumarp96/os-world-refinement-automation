@@ -124,8 +124,7 @@ def main():
     
     required_files = {
         'notebook': task_path / f"{task_folder}.ipynb",
-        'events': task_path / "events.json",
-        'screenshots': task_path / "screenshots"
+        'events': task_path / "events.json"
     }
     
     missing_files = []
@@ -153,31 +152,38 @@ def main():
         cwd=project_root
     )
     
-    # Step 2: Generate observations and thoughts
+    # Step 2: Download screenshots
+    run_command(
+        [str(python_exe), "Local Scripts/download_screenshot.py", task_folder],
+        "Step 2: Downloading screenshots",
+        cwd=project_root
+    )
+    
+    # Step 3: Generate observations and thoughts
     run_command(
         [str(python_exe), "Local Scripts/generate_observations_thoughts.py", task_folder],
-        "Step 2: Generating observations and thoughts",
+        "Step 3: Generating observations and thoughts",
         cwd=project_root
     )
     
-    # Step 3: Run main validation (using python -m syntax)
+    # Step 4: Run main validation (using python -m syntax)
     run_command(
         [str(python_exe), "-m", "src.main", task_folder],
-        "Step 3: Running validation service",
+        "Step 4: Running validation service",
         cwd=project_root
     )
     
-    # Step 4: Update notebook with validated data
+    # Step 5: Update notebook with validated data
     run_command(
         [str(python_exe), "Local Scripts/update_notebook.py", task_folder],
-        "Step 4: Updating notebook with validated data",
+        "Step 5: Updating notebook with validated data",
         cwd=project_root
     )
     
-    # Step 5: Verify structure
+    # Step 6: Verify structure
     run_command(
         [str(python_exe), "Local Scripts/verify_structure.py", task_folder],
-        "Step 5: Verifying notebook structure",
+        "Step 6: Verifying notebook structure",
         cwd=project_root
     )
     
