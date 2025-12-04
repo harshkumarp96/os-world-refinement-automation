@@ -26,28 +26,40 @@ class ValidatorService:
     
     def load_task_json(self, task_id: str) -> Dict:
         """
-        Load task JSON file
+        Load task JSON file from the new modular structure
         
         Args:
-            task_id: Task identifier (e.g., 'task_84')
+            task_id: Task identifier (e.g., 'task_645')
             
         Returns:
             Dictionary with task data
         """
-        json_path = settings.input_json_dir / f"{task_id}.json"
+        # New structure: Input Data/task_645/observation_thought.json
+        task_folder = settings.input_data_dir / task_id
+        json_path = task_folder / "observation_thought.json"
         
+        # Fallback to old structure for backward compatibility
         if not json_path.exists():
-            raise FileNotFoundError(f"Task JSON not found: {json_path}")
+            old_json_path = settings.input_json_dir / f"{task_id}.json"
+            if old_json_path.exists():
+                logger.warning(f"Using legacy JSON path: {old_json_path}")
+                json_path = old_json_path
+            else:
+                raise FileNotFoundError(
+                    f"Task JSON not found. Tried:\n"
+                    f"  - {json_path}\n"
+                    f"  - {old_json_path}"
+                )
         
         with open(json_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
         
-        logger.info(f"Loaded {task_id} with {len(data)} steps")
+        logger.info(f"Loaded {task_id} with {len(data)} steps from {json_path}")
         return data
     
     def get_screenshot_path(self, task_id: str, step_number: int) -> Path:
         """
-        Get the path to a screenshot
+        Get the path to a screenshot from the new modular structure
         
         Args:
             task_id: Task identifier
@@ -56,11 +68,17 @@ class ValidatorService:
         Returns:
             Path to the screenshot
         """
-        # Format: Input Data/Screenshots/task_84/1.png
-        screenshot_path = settings.screenshots_dir / task_id / f"{step_number}.png"
+        # New structure: Input Data/task_645/screenshots/1.png
+        task_folder = settings.input_data_dir / task_id
+        screenshot_path = task_folder / "screenshots" / f"{step_number}.png"
         
+        # Fallback to old structure for backward compatibility
         if not screenshot_path.exists():
-            raise FileNotFoundError(f"Screenshot not found: {screenshot_path}")
+            old_screenshot_path = settings.screenshots_dir / task_id / f"{step_number}.png"
+            if old_screenshot_path.exists():
+                screenshot_path = old_screenshot_path
+            else:
+                raise FileNotFoundError(f"Screenshot not found: {screenshot_path}")
         
         return screenshot_path
     
@@ -130,11 +148,11 @@ class ValidatorService:
                     "next_step": next_step
                 })
             except FileNotFoundError as e:
-                # If screenshot missing and content is empty, raise error
+                # Give clear warning about missing screenshot
                 if is_empty:
                     logger.error(
-                        f"[{task_id} - {step_key}] Cannot process: "
-                        f"Screenshot missing and observation/thought are empty. {str(e)}"
+                        f"[{task_id} - {step_key}] ⚠️ CRITICAL: Screenshot missing and observation/thought are empty. "
+                        f"Cannot generate content without screenshot. {str(e)}"
                     )
                     raise ValueError(
                         f"Cannot generate content for {step_key}: "
@@ -142,7 +160,10 @@ class ValidatorService:
                         f"At least one must be provided."
                     )
                 else:
-                    logger.warning(f"Skipping {step_key}: {str(e)}")
+                    logger.warning(
+                        f"[{task_id} - {step_key}] ⚠️ WARNING: Screenshot not found at expected location. "
+                        f"Validation will be skipped for this step. {str(e)}"
+                    )
                     continue
         
         logger.info(f"Prepared {len(requests)} validation requests for {task_id}")
@@ -233,16 +254,13 @@ class ValidatorService:
             total_tokens_used=total_tokens if total_tokens["input_tokens"] > 0 else None
         )
         
-        logger.info(
-            f"Completed {task_id}: {successful}/{len(validation_requests)} successful, "
-            f"Total tokens: {total_tokens}"
-        )
+        logger.info(f"Completed {task_id}: {successful}/{len(validation_requests)} successful")
         
         return result
     
     def save_validated_task(self, task_id: str, validated_steps: Dict[str, ValidationResponse]) -> Path:
         """
-        Save validated task to output JSON
+        Save validated task to output JSON in the task folder
         
         Args:
             task_id: Task identifier
@@ -260,16 +278,19 @@ class ValidatorService:
                 "thought": response.updated_thought
             }
         
-        # Save to output directory
-        output_path = settings.output_dir / f"{task_id}_validated.json"
+        # Save to task folder: Input Data/task_645/validated_observation_thought.json
+        task_folder = settings.input_data_dir / task_id
+        task_folder.mkdir(parents=True, exist_ok=True)
+        
+        output_path = task_folder / "validated_observation_thought.json"
         
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(output_data, f, indent=4, ensure_ascii=False)
         
         logger.info(f"Saved validated output to {output_path}")
         
-        # Also save detailed report
-        report_path = settings.output_dir / f"{task_id}_report.json"
+        # Also save detailed report in task folder
+        report_path = task_folder / "validation_report.json"
         report_data = {
             "task_id": task_id,
             "timestamp": datetime.now().isoformat(),

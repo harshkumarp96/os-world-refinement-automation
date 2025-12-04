@@ -3,12 +3,13 @@
 Comprehensive script to parse task notebooks and generate JSON files.
 
 Usage:
-    python generate_task_json.py <notebook_path>
+    python "Local Scripts\generate_observations_thoughts.py" task_<number>
     
 Example:
-    python generate_task_json.py "Input Data/colab_notebook/task_77.ipynb"
+    python "Local Scripts\generate_observations_thoughts.py" task_645
     
-Output will be saved to: Input Data/Json/task_XX.json
+Input: Input Data/task_<number>/task_<number>.ipynb
+Output: Input Data/task_<number>/observation_thought.json
 """
 
 import json
@@ -167,25 +168,14 @@ def print_validation_report(validation: Dict[str, Any], output_path: str) -> Non
     print("\n" + "="*70)
 
 
-def get_output_path(notebook_path: str) -> str:
+def get_output_path(task_name: str) -> str:
     """
-    Determine the output JSON path based on the notebook path.
-    Extracts task number and creates path in Json folder.
+    Determine the output JSON path based on the task name.
+    Output will be saved in the same folder as the input notebook.
     """
-    notebook_name = Path(notebook_path).stem  # e.g., "task_77"
-    
-    # Try to extract task number
-    match = re.search(r'task[_\s-]*(\d+)', notebook_name, re.IGNORECASE)
-    if match:
-        task_num = match.group(1)
-        json_filename = f"task_{task_num}.json"
-    else:
-        # Fallback: use the notebook name
-        json_filename = f"{notebook_name}.json"
-    
     # Get the base directory (Local Scripts folder parent is project root)
     base_dir = Path(__file__).parent.parent
-    output_path = base_dir / "Input Data" / "Json" / json_filename
+    output_path = base_dir / "Input Data" / task_name / "observation_thought.json"
     
     return str(output_path)
 
@@ -220,25 +210,25 @@ def main():
     print("  TASK NOTEBOOK TO JSON CONVERTER")
     print("="*70)
     
-    # Get notebook path from command line
+    # Get task name from command line (e.g., "task_645")
     if len(sys.argv) < 2:
-        print("\nUsage: python generate_task_json.py <task_number>")
-        print("Example: python generate_task_json.py 77")
+        print("\nUsage: python \"Local Scripts\\generate_observations_thoughts.py\" task_<number>")
+        print("Example: python \"Local Scripts\\generate_observations_thoughts.py\" task_645")
         sys.exit(1)
     
-    task_num = sys.argv[1]
+    task_name = sys.argv[1]
     
-    # Build notebook path
+    # Build notebook path using new structure: Input Data/task_<number>/task_<number>.ipynb
     base_dir = Path(__file__).parent.parent
-    notebook_path = str(base_dir / "Input Data" / "colab_notebook" / f"task_{task_num}.ipynb")
+    notebook_path = str(base_dir / "Input Data" / task_name / f"{task_name}.ipynb")
     
     # Check if input file exists
     if not Path(notebook_path).exists():
         print(f"\nERROR: Notebook file not found: {notebook_path}")
         sys.exit(1)
     
-    # Determine output path
-    output_path = get_output_path(notebook_path)
+    # Determine output path (same folder as input)
+    output_path = get_output_path(task_name)
     
     print(f"\nInput:  {notebook_path}")
     print(f"Output: {output_path}")

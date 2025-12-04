@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     
     # Directory paths
     project_root: Path = Path(__file__).parent.parent
+    input_data_dir: Path = project_root / os.getenv("INPUT_DATA_DIR", "Input Data")
+    # Legacy paths for backward compatibility
     input_json_dir: Path = project_root / os.getenv("INPUT_JSON_DIR", "Input Data/Json")
     screenshots_dir: Path = project_root / os.getenv("SCREENSHOTS_DIR", "Input Data/Screenshots")
     output_dir: Path = project_root / os.getenv("OUTPUT_DIR", "output")

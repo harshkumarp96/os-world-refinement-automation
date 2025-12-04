@@ -52,6 +52,7 @@ logs/
 
 # Input and Output data
 Input Data/
+Old Input Data/
 output/
 
 # Cache

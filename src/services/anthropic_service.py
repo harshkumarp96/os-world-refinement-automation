@@ -29,8 +29,6 @@ class AnthropicService:
         
         # Direct Anthropic client for async operations
         self.client = AsyncAnthropic(api_key=settings.anthropic_api_key)
-        
-        logger.info(f"Initialized Anthropic service with model: {settings.anthropic_model}")
     
     def _create_validation_prompt(
         self, 
@@ -175,9 +173,6 @@ class AnthropicService:
                 next_step=next_step
             )
             
-            # Call Anthropic API with vision
-            logger.info(f"[{task_id} - Step {step_number}] Calling Anthropic API...")
-            
             response = await self.client.messages.create(
                 model=settings.anthropic_model,
                 max_tokens=settings.max_tokens,
@@ -212,11 +207,6 @@ class AnthropicService:
                 "output_tokens": response.usage.output_tokens
             }
             
-            logger.info(
-                f"[{task_id} - Step {step_number}] "
-                f"Tokens used: {tokens_used['input_tokens']} input, {tokens_used['output_tokens']} output"
-            )
-            
             # Parse JSON response
             import json
             import re
@@ -238,7 +228,6 @@ class AnthropicService:
                     try:
                         result = json.loads(json_text)
                         result["tokens_used"] = tokens_used
-                        logger.info(f"[{task_id} - Step {step_number}] Successfully extracted JSON from markdown block")
                         return result
                     except json.JSONDecodeError:
                         logger.warning(f"[{task_id} - Step {step_number}] Extracted text is not valid JSON")

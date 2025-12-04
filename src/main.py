@@ -65,23 +65,35 @@ async def validate_task(task_id: str, validator: ValidatorService):
 
 async def validate_all_tasks(validator: ValidatorService):
     """
-    Validate all tasks in the JSON directory
+    Validate all tasks in the Input Data directory
     
     Args:
         validator: ValidatorService instance
     """
-    # Find all task JSON files
-    json_files = list(settings.input_json_dir.glob("task_*.json"))
+    # Find all task folders in new structure
+    task_folders = []
+    if settings.input_data_dir.exists():
+        task_folders = [d for d in settings.input_data_dir.iterdir() 
+                       if d.is_dir() and d.name.startswith("task_") 
+                       and (d / "observation_thought.json").exists()]
     
-    if not json_files:
-        console.print("[yellow]No task JSON files found in the json directory[/yellow]")
+    # Also check legacy structure for backward compatibility
+    if settings.input_json_dir.exists():
+        legacy_files = list(settings.input_json_dir.glob("task_*.json"))
+        for json_file in legacy_files:
+            task_id = json_file.stem
+            if not any(f.name == task_id for f in task_folders):
+                task_folders.append(json_file.parent.parent / task_id)
+    
+    if not task_folders:
+        console.print("[yellow]No task folders found in the Input Data directory[/yellow]")
         return
     
-    console.print(f"\n[bold cyan]Found {len(json_files)} tasks to validate[/bold cyan]")
+    console.print(f"\n[bold cyan]Found {len(task_folders)} tasks to validate[/bold cyan]")
     
     results = []
-    for json_file in json_files:
-        task_id = json_file.stem  # e.g., 'task_84'
+    for task_folder in task_folders:
+        task_id = task_folder.name
         result = await validate_task(task_id, validator)
         results.append(result)
     
