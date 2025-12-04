@@ -96,23 +96,24 @@ class AnthropicService:
 **Your Task:**
 1. Carefully analyze the screenshot provided
 2. Compare the original observation and thought with what you actually see
-3. If they accurately describe the screenshot, return them unchanged
-4. If there are inaccuracies, missing details, or misalignments, correct them to match the screenshot
-5. The screenshot is the SINGLE SOURCE OF TRUTH - all text must align with what's visible
+3. **PRESERVE the existing structure and phrasing** - only modify incorrect descriptions or values
+4. Make **minimal changes** - update only what is factually wrong based on the screenshot
+5. Keep accurate parts unchanged to enable easy comparison between old and new versions
+6. The screenshot is the SINGLE SOURCE OF TRUTH - all text must align with what's visible
 
 **Response Format (JSON):**
 {{
-    "updated_observation": "Your validated/corrected observation",
-    "updated_thought": "Your validated/corrected thought",
-    "validation_reasoning": "Brief explanation of what changes were made and why (or why no changes were needed)"
+    "updated_observation": "Observation with ONLY incorrect parts corrected, keeping structure intact",
+    "updated_thought": "Thought with ONLY incorrect parts corrected, keeping structure intact",
+    "validation_reasoning": "List specific corrections made (e.g., 'Changed X from Y to Z')"
 }}
 
 **Important Guidelines:**
-- Be factual and precise
-- Only describe what's actually visible in the screenshot
-- Maintain the same level of detail as the original
-- If the original is accurate, keep it as-is
-- If corrections are needed, explain why in the reasoning
+- **Preserve original structure and wording** wherever possible
+- Only change specific incorrect values, names, numbers, or descriptions
+- If the original is accurate, return it exactly as-is
+- Make corrections surgical and precise for easy comparison
+- In reasoning, clearly state what was changed from what to what
 """
         return prompt
     
@@ -216,9 +217,7 @@ class AnthropicService:
                 result["tokens_used"] = tokens_used
                 return result
             except json.JSONDecodeError:
-                # Try to extract JSON from markdown code blocks
-                logger.warning(f"[{task_id} - Step {step_number}] Initial JSON parsing failed, attempting to extract from markdown...")
-                
+                # Try to extract JSON from markdown code blocks (common Claude behavior)
                 # Pattern to match JSON in markdown code blocks
                 json_pattern = r'```(?:json)?\s*\n?(.*?)\n?```'
                 match = re.search(json_pattern, response_text, re.DOTALL)
@@ -230,12 +229,10 @@ class AnthropicService:
                         result["tokens_used"] = tokens_used
                         return result
                     except json.JSONDecodeError:
-                        logger.warning(f"[{task_id} - Step {step_number}] Extracted text is not valid JSON")
+                        pass  # Will try recovery next
                 
                 # If still can't parse, try to recover partial JSON for generation mode
                 if is_generating:
-                    logger.warning(f"[{task_id} - Step {step_number}] Attempting to recover partial JSON for generation...")
-                    
                     # Try to extract fields with regex
                     obs_match = re.search(r'"updated_observation":\s*"([^"]*(?:\\"[^"]*)*)"', response_text, re.DOTALL)
                     thought_match = re.search(r'"updated_thought":\s*"([^"]*(?:\\"[^"]*)*)"', response_text, re.DOTALL)
@@ -244,14 +241,13 @@ class AnthropicService:
                         recovered = {
                             "updated_observation": obs_match.group(1).replace('\\"', '"') if obs_match else "",
                             "updated_thought": thought_match.group(1).replace('\\"', '"') if thought_match else "",
-                            "validation_reasoning": f"Recovered from incomplete API response (truncated at {len(response_text)} chars)",
+                            "validation_reasoning": f"Recovered from incomplete API response",
                             "tokens_used": tokens_used
                         }
-                        logger.info(f"[{task_id} - Step {step_number}] Partially recovered content from malformed response")
                         return recovered
                 
                 # Last resort: return original content with error message
-                logger.error(f"[{task_id} - Step {step_number}] Could not parse or recover JSON from response")
+                logger.warning(f"[{task_id} - Step {step_number}] Could not parse response")
                 return {
                     "updated_observation": observation,
                     "updated_thought": thought,

@@ -14,6 +14,7 @@ import json
 import os
 import sys
 import re
+import base64
 from pathlib import Path
 
 
@@ -58,14 +59,32 @@ def get_step_number(cell_content):
 
 
 def create_image_cell(image_path):
-    """Create a markdown cell with an embedded image."""
-    return {
-        "cell_type": "markdown",
-        "metadata": {},
-        "source": [
-            f"![Step Image]({image_path})"
-        ]
-    }
+    """Create a markdown cell with an embedded image using base64 encoding."""
+    # Read the image file and encode it as base64
+    try:
+        with open(image_path, 'rb') as img_file:
+            img_data = base64.b64encode(img_file.read()).decode('utf-8')
+        
+        # Create markdown with embedded base64 image
+        img_markdown = f"![Step Image](data:image/png;base64,{img_data})"
+        
+        return {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                img_markdown
+            ]
+        }
+    except Exception as e:
+        print(f"Warning: Could not encode image {image_path}: {e}")
+        # Fallback to file reference if encoding fails
+        return {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                f"![Step Image]({image_path})"
+            ]
+        }
 
 
 def create_markdown_cell(content):
@@ -136,7 +155,6 @@ def update_notebook(notebook_path, validated_json_path, screenshots_dir, actions
                 # Check if next cell is already an image - if so, replace it
                 image_filename = f"{step_num}.png"
                 image_path = screenshots_folder / image_filename
-                relative_image_path = f"screenshots/{image_filename}"
                 
                 # Check if the next cell is an existing image cell
                 has_existing_image = False
@@ -146,9 +164,9 @@ def update_notebook(notebook_path, validated_json_path, screenshots_dir, actions
                         has_existing_image = True
                         i += 1  # Skip the old image cell
                 
-                # Add image cell (either new or replacement)
+                # Add image cell (either new or replacement) with absolute path for encoding
                 if image_path.exists():
-                    new_cells.append(create_image_cell(relative_image_path))
+                    new_cells.append(create_image_cell(image_path))
                 
                 # Get validated data for this step
                 step_key = f"step_{step_num}"
@@ -194,12 +212,10 @@ def update_notebook(notebook_path, validated_json_path, screenshots_dir, actions
                     
                     # Add new observation and thought cells if they have content
                     if observation:
-                        new_cells.append(create_markdown_cell("### Observation"))
-                        new_cells.append(create_markdown_cell(observation))
+                        new_cells.append(create_markdown_cell(f"### Observation\n\n{observation}"))
                     
                     if thought:
-                        new_cells.append(create_markdown_cell("### Thought"))
-                        new_cells.append(create_markdown_cell(thought))
+                        new_cells.append(create_markdown_cell(f"### Thought\n\n{thought}"))
                     
                     # Add original action cell as-is
                     if original_action_cell:
