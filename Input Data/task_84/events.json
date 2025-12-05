@@ -1,0 +1,286 @@
+{
+  "events": [
+    {
+      "id": "b9498805-3f11-458f-a57d-1f83f85c6bb9",
+      "end": 5.057,
+      "data": {
+        "x": 60,
+        "y": 487,
+        "text": "left-click",
+        "numClicks": 1
+      },
+      "name": "click left-click",
+      "type": "click",
+      "start": 4.912,
+      "description": null,
+      "screenshots": {
+        "end": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_935bd2ab-4d65-4cc6-ad09-08e7ad77968d.png",
+        "start": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_4847cb13-9547-4eb3-a7c5-543b60e2e105.png"
+      },
+      "includeScreenshots": true
+    },
+    {
+      "id": "2af4ef88-e505-4d0c-ae93-376bc74f5cbe",
+      "end": 15.298,
+      "data": {
+        "x": 24,
+        "y": 78,
+        "text": "left-click",
+        "numClicks": 1
+      },
+      "name": "click left-click",
+      "type": "click",
+      "start": 15.156,
+      "description": null,
+      "screenshots": {
+        "end": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_1cf976b4-0b27-4234-8c01-34a8fa449bad.png",
+        "start": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_d8d7e975-adf8-42eb-997d-d4b39dd66c58.png"
+      },
+      "includeScreenshots": true
+    },
+    {
+      "id": "22da26c2-fcd4-4e5f-8141-03569c9522fa",
+      "end": 16.901,
+      "data": {
+        "x": 90,
+        "y": 168,
+        "text": "left-click",
+        "numClicks": 1
+      },
+      "name": "click left-click",
+      "type": "click",
+      "start": 16.8,
+      "description": null,
+      "screenshots": {
+        "end": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_b6ba83f1-88ae-4322-91ae-2150fae2d7ca.png",
+        "start": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_fc49e911-8fd9-436d-9809-4af9d7e4e3d4.png"
+      },
+      "includeScreenshots": true
+    },
+    {
+      "id": "534beb45-967d-46a5-9c24-ef3abcb45e2d",
+      "end": 19.687,
+      "data": {
+        "x": 89,
+        "y": 249,
+        "text": "left-click",
+        "numClicks": 1
+      },
+      "name": "click left-click",
+      "type": "click",
+      "start": 19.569,
+      "description": null,
+      "screenshots": {
+        "end": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_9e99bf09-1275-4697-835a-539fa09c5d5f.png",
+        "start": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_812a29d7-fd02-4e49-a073-f69c73775d0f.png"
+      },
+      "includeScreenshots": true
+    },
+    {
+      "id": "59d41017-e860-4fbf-a24c-82fcd05fd501",
+      "end": 20.798,
+      "data": {
+        "x": 263,
+        "y": 170,
+        "text": "left-click",
+        "numClicks": 1
+      },
+      "name": "click left-click",
+      "type": "click",
+      "start": 20.682,
+      "description": null,
+      "screenshots": {
+        "end": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_bd592eda-464e-4bf5-878c-52324860a2c1.png",
+        "start": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_b71680e8-ca27-46b1-8835-cab47e44344c.png"
+      },
+      "includeScreenshots": true
+    },
+    {
+      "id": "be3f28eb-09b6-4cfc-878a-5973215a90f6",
+      "end": 23.664,
+      "data": {
+        "x": 970,
+        "y": 736,
+        "text": "left-click",
+        "numClicks": 1
+      },
+      "name": "click left-click",
+      "type": "click",
+      "start": 23.536,
+      "description": null,
+      "screenshots": {
+        "end": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_3d2a4511-da08-4479-9a35-09cd70d06883.png",
+        "start": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_66259f69-aca6-4158-95dd-27381a5bbea5.png"
+      },
+      "includeScreenshots": true
+    },
+    {
+      "id": "c9e4df7d-452f-4dd4-815e-2392564d6e6b",
+      "end": 28.902,
+      "data": {
+        "x": 434,
+        "y": 81,
+        "text": "left-click",
+        "numClicks": 1
+      },
+      "name": "click left-click",
+      "type": "click",
+      "start": 28.788,
+      "description": null,
+      "screenshots": {
+        "end": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_8d18506c-9260-4068-afe0-3bcbbbca7878.png",
+        "start": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_15bd7c2f-87da-4a5d-ac39-ac7fc99561cd.png"
+      },
+      "includeScreenshots": true
+    },
+    {
+      "id": "edec54bc-d798-4637-bc6b-d2deb1e93638",
+      "end": 32.168,
+      "data": {
+        "x": 492,
+        "y": 413,
+        "text": "left-click",
+        "numClicks": 1
+      },
+      "name": "click left-click",
+      "type": "click",
+      "start": 32.035,
+      "description": null,
+      "screenshots": {
+        "end": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_a655b6c0-493c-4d0b-8487-56cb8f7d7d12.png",
+        "start": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_b03348fa-ff81-4a6c-bd0e-4ed84126b1b2.png"
+      },
+      "includeScreenshots": true
+    },
+    {
+      "id": "fc8a570e-2297-486b-bb8c-488c86788611",
+      "end": 35.789,
+      "data": {
+        "x": 868,
+        "y": 413,
+        "text": "left-click",
+        "numClicks": 1
+      },
+      "name": "click left-click",
+      "type": "click",
+      "start": 35.678,
+      "description": null,
+      "screenshots": {
+        "end": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_9f40364c-dc23-4e1a-bcdb-01ccc8232404.png",
+        "start": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_19254846-9bcc-41c2-9d15-8000058949ce.png"
+      },
+      "includeScreenshots": true
+    },
+    {
+      "id": "6ae73de9-b1da-4b00-a905-d89fe2b6d90e",
+      "end": 50.601,
+      "data": {
+        "x": 560,
+        "y": 416,
+        "text": "left-click",
+        "numClicks": 1
+      },
+      "name": "click left-click",
+      "type": "click",
+      "start": 50.49,
+      "description": null,
+      "screenshots": {
+        "end": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_7e575678-ead5-4156-b32b-682c756b83ac.png",
+        "start": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_fc7c964f-6baa-4cdb-a430-350c4c65190d.png"
+      },
+      "includeScreenshots": true
+    },
+    {
+      "id": "347b0307-cd0e-405d-86af-03088efd570e",
+      "end": 52.361,
+      "data": {
+        "x": 413,
+        "y": 538,
+        "text": "left-click",
+        "numClicks": 1
+      },
+      "name": "click left-click",
+      "type": "click",
+      "start": 52.231,
+      "description": null,
+      "screenshots": {
+        "end": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_e658a600-bb92-4357-9b8b-d58503886cdf.png",
+        "start": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_e67d1a56-aaa6-4582-83e3-15dc5671ce86.png"
+      },
+      "includeScreenshots": true
+    },
+    {
+      "id": "7eaafcf0-07a0-44aa-8d59-541c72fb2edf",
+      "end": 54.517,
+      "data": {
+        "x": 617,
+        "y": 451,
+        "text": "left-click",
+        "numClicks": 2
+      },
+      "name": "click left-click",
+      "type": "click",
+      "start": 54.397,
+      "description": null,
+      "screenshots": {
+        "end": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_807e66b9-7f72-4b52-b4f4-4b36503a3871.png",
+        "start": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_afcac5a5-aa90-41ab-8c39-463e7bca5b14.png"
+      },
+      "includeScreenshots": true
+    },
+    {
+      "id": "05bee4a8-4526-4c4c-b021-e2ee7fa8289b",
+      "end": 56.408,
+      "data": {
+        "text": "66"
+      },
+      "name": "typing 66",
+      "type": "typing",
+      "start": 56.122,
+      "description": null,
+      "screenshots": {
+        "end": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_eb0f9201-3f9a-43df-bbca-6b3077a82f20.png",
+        "start": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_dea56fa2-f0d7-4ca0-9a7e-d7a1d9fb427b.png"
+      },
+      "includeScreenshots": true
+    },
+    {
+      "id": "b738745b-7ed1-49df-8cca-50c8926f6b7b",
+      "end": 58.538,
+      "data": {
+        "x": 644,
+        "y": 517,
+        "text": "left-click",
+        "numClicks": 1
+      },
+      "name": "click left-click",
+      "type": "click",
+      "start": 58.377,
+      "description": null,
+      "screenshots": {
+        "end": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_ea7fbbf5-534c-4c92-ad87-3dd3ddbeb1b3.png",
+        "start": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_2751f1a6-8721-4a3e-9ac1-f5e6b93f2325.png"
+      },
+      "includeScreenshots": true
+    },
+    {
+      "id": "5b4551ef-02da-4241-8a2e-6f98aa5c5871",
+      "end": 60.645,
+      "data": {
+        "x": 1818,
+        "y": 885,
+        "text": "left-click",
+        "numClicks": 1
+      },
+      "name": "click left-click",
+      "type": "click",
+      "start": 60.516,
+      "description": null,
+      "screenshots": {
+        "end": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_a84dc528-b314-4b5e-89fc-e14bbbc9d6a1.png",
+        "start": "https://storage.googleapis.com/video-annotation-tool-new/screenshot_7181b612-cee4-470f-9d32-79749a4190f7.png"
+      },
+      "includeScreenshots": true
+    }
+  ]
+}
