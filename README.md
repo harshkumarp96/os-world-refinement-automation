@@ -36,6 +36,8 @@ From the project root directory:
 python .\process_task.py task_84
 ```
 
+**Note:** On first run, the script will automatically create a virtual environment and install all required dependencies.
+
 The script will generate:
 - `task_84_updated.ipynb` - Updated notebook with observations/thoughts
 - `validated_observation_thought.json` - Generated content
@@ -49,6 +51,7 @@ The script will generate:
 2. **Create clean SFT events**
    - Remove unnecessary events
    - Keep only relevant actions
+   - **Keep last dummy event** to provide end state screenshot (pg action for this event is ignored as it will be overridden by `sys.exit()`)
 
 3. **Preview and save events**
    - Preview JSON in activity monitor
