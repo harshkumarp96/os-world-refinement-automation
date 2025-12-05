@@ -1,16 +1,12 @@
 """Verification script to check notebook structure follows the expected format.
 
 Expected structure for each step:
-1. ## Step N
-2. ![Step Image](screenshots/N.png)
-3. ### Observation
-4. <observation content>
-5. ### Thought
-6. <thought content>
-7. ### Action
-8. <action content>
-9. ### Code
-10. <code content>
+1. ## Step N (separate cell)
+2. ![Step Image](screenshots/N.png) or embedded image (separate cell)
+3. ### Observation + content (same cell)
+4. ### Thought + content (same cell)
+5. ### Action + content (same cell)
+6. ### Code + code content (same cell)
 """
 
 import json
@@ -55,13 +51,9 @@ def verify_notebook(notebook_path):
                 expected_sequence = [
                     ('image', f'![Step Image](screenshots/{step_num}.png)'),
                     ('observation_header', '### Observation'),
-                    ('observation_content', None),
                     ('thought_header', '### Thought'),
-                    ('thought_content', None),
                     ('action_header', '### Action'),
-                    ('action_content', None),
                     ('code_header', '### Code'),
-                    ('code_content', None)
                 ]
                 
                 j = i + 1
@@ -83,47 +75,35 @@ def verify_notebook(notebook_path):
                     
                     # Check image
                     if exp_type == 'image':
-                        if not next_content_strip.startswith('![Step Image](screenshots/'):
+                        # Accept both file reference and embedded base64 images
+                        if not (next_content_strip.startswith('![Step Image](screenshots/') or 
+                                next_content_strip.startswith('![Step Image](data:image/')):
                             issues.append(f"Step {step_num}: Missing or incorrect screenshot image reference")
                         else:
-                            # Verify image path matches step number
-                            if f'screenshots/{step_num}.png' not in next_content_strip:
-                                warnings.append(f"Step {step_num}: Screenshot path doesn't match step number")
+                            # Verify image path matches step number (only for file references)
+                            if next_content_strip.startswith('![Step Image](screenshots/'):
+                                if f'screenshots/{step_num}.png' not in next_content_strip:
+                                    warnings.append(f"Step {step_num}: Screenshot path doesn't match step number")
                         seq_idx += 1
+                        j += 1
+                        continue
                     
-                    # Check headers
+                    # Check headers (all have content in the same cell)
                     elif exp_type in ['observation_header', 'thought_header', 'action_header', 'code_header']:
                         if next_content_strip.startswith(exp_value):
-                            # For action_header, content is in the same cell
-                            if exp_type == 'action_header':
-                                # Check if there's content after the header in the same cell
-                                if len(next_content_strip) > len(exp_value):
-                                    seq_idx += 2  # Skip both header and content check
-                                else:
-                                    warnings.append(f"Step {step_num}: Action header found but content is empty")
-                                    seq_idx += 2
-                            else:
+                            # Content is in the same cell
+                            if len(next_content_strip) > len(exp_value):
                                 seq_idx += 1
+                            else:
+                                section = exp_type.replace('_header', '').capitalize()
+                                warnings.append(f"Step {step_num}: {exp_value} header found but content is empty")
+                                seq_idx += 1
+                            j += 1
+                            continue
                         else:
                             section = exp_type.replace('_header', '').capitalize()
-                            issues.append(f"Step {step_num}: Missing '### {section}' header in correct order")
+                            issues.append(f"Step {step_num}: Missing '{exp_value}' header in correct order")
                             break
-                    
-                    # Check content cells
-                    elif exp_type in ['observation_content', 'thought_content', 'action_content', 'code_content']:
-                        # Content should not be another header
-                        if next_content_strip.startswith('###'):
-                            section = exp_type.replace('_content', '').capitalize()
-                            issues.append(f"Step {step_num}: Missing {section} content")
-                            seq_idx += 1
-                            continue
-                        
-                        # Check content is not empty
-                        if not next_content_strip:
-                            section = exp_type.replace('_content', '').capitalize()
-                            warnings.append(f"Step {step_num}: {section} content is empty")
-                        
-                        seq_idx += 1
                     
                     j += 1
                 
